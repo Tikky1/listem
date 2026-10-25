@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f6b5c">
+<title>Listem</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@600;800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#f3f6f5;--card:#ffffff;--fg:#17201e;--muted:#5d6b67;--line:#dbe3e0;
+  --accent:#0f6b5c;--accent-ink:#ffffff;--soft:#e2efeb;--star:#b7791f;--danger:#b4322a;
+  --display:"Gabarito",system-ui,sans-serif;--body:"Figtree",system-ui,sans-serif;color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#101614;--card:#18201e;--fg:#e6eeeb;--muted:#93a39e;--line:#2a3532;
+  --accent:#4fbfa7;--accent-ink:#0b1412;--soft:#1f2f2b;--star:#e3b04b;--danger:#f0857c;color-scheme:dark}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:720px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-weight:800;font-size:30px;margin:0;letter-spacing:-.01em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:6px;display:flex;flex-direction:column;gap:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto}
+.tab,.chip{border:1px solid var(--line);background:var(--card);color:var(--fg);font:600 14px var(--body);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.chip{font-size:13px;padding:5px 12px}
+.chip[aria-pressed="true"]{background:var(--soft);border-color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.hint{font-size:12px;color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+textarea,select,input[type=text],input[type=password],input[type=url]{border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:14px var(--body);background:var(--bg);color:var(--fg);min-width:0}
+textarea{width:100%;min-height:52px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>input{flex:1 1 150px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;height:34px;padding:0 14px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);font:600 14px var(--body);border-radius:10px;cursor:pointer;text-decoration:none;white-space:nowrap;flex:none}
+.btn.ghost{background:var(--card);color:var(--fg);border-color:var(--line)}
+.btn.small{height:30px;padding:0 10px;font-size:13px}
+.btn.danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.grip{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;width:30px;padding:0;font-size:17px;color:var(--muted)}
+button:focus-visible,select:focus-visible,textarea:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.msg{font-size:13px;color:var(--muted);min-height:1em}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;display:grid;grid-template-columns:96px minmax(0,1fr);overflow:hidden}
+.item.noimg{grid-template-columns:minmax(0,1fr)}
+.thumb{width:100%;height:100%;min-height:96px;object-fit:cover;background:var(--soft);display:block}
+.body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.name{font-family:var(--display);font-weight:600;font-size:17px;color:var(--fg);text-decoration:none;overflow-wrap:anywhere}
+a.name:hover{text-decoration:underline}
+.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.star{color:var(--star);font-weight:600}
+.note{font-size:13px;overflow-wrap:anywhere}
+.acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.moves{display:flex;gap:6px;flex-wrap:wrap}
+.done .name{text-decoration:line-through;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;border:1px dashed var(--line);border-radius:14px}
+.ghostcard{position:fixed;z-index:50;pointer-events:none;opacity:.92;box-shadow:0 10px 28px rgba(0,0,0,.28);width:min(320px,80vw)}
+.over{outline:2px dashed var(--accent);outline-offset:2px}
+body.dragging{user-select:none;-webkit-user-select:none}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+summary{cursor:pointer;font-weight:600}
+details ol{padding-left:20px;margin:10px 0 0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+code{background:var(--soft);padding:1px 5px;border-radius:5px;font-size:12px}
+@media (max-width:420px){.item{grid-template-columns:72px minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Listem</h1><div class="row"><span class="count" id="count"></span><button class="btn ghost small" id="setBtn" type="button">Ayarlar</button></div></div>
+
+  <form class="panel" id="setup" hidden>
+    <b>Bağlantı ayarları</b>
+    <input type="url" id="sUrl" placeholder="Apps Script web uygulaması URL'si (…/exec)">
+    <input type="password" id="sKey" placeholder="Kod.gs içindeki şifre">
+    <div class="row"><button class="btn" type="submit">Kaydet</button><span class="msg" id="sMsg"></span></div>
+  </form>
+
+  <div class="nav">
+    <div class="tabs" role="group" aria-label="Bölümler">
+      <button class="tab" data-sec="yemek" aria-pressed="true" type="button">Yemek Yerleri</button>
+      <button class="tab" data-sec="hediye" aria-pressed="false" type="button">Hediyeler</button>
+      <button class="tab" data-sec="not" aria-pressed="false" type="button">Unutma</button>
+    </div>
+    <div class="chips" id="cats" role="group" aria-label="Kategori">
+      <button class="chip" data-cat="hepsi" aria-pressed="true" type="button">Hepsi</button>
+      <button class="chip" data-cat="Kahvaltı" aria-pressed="false" type="button">Kahvaltı</button>
+      <button class="chip" data-cat="Ana Yemek" aria-pressed="false" type="button">Ana Yemek</button>
+      <button class="chip" data-cat="Tatlı" aria-pressed="false" type="button">Tatlı</button>
+    </div>
+    <div class="hint">Taşımak için kartı ⠿ tutup üstteki bölüme veya kategoriye sürükle.</div>
+  </div>
+
+  <form class="panel" id="addForm">
+    <textarea id="inp" placeholder="Link yapıştır veya not yaz"></textarea>
+    <div class="row">
+      <select id="catSel" aria-label="Kategori"><option>Ana Yemek</option><option>Kahvaltı</option><option>Tatlı</option></select>
+      <input type="text" id="noteInp" placeholder="Not (isteğe bağlı)">
+      <button class="btn" type="submit">Ekle</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </form>
+
+  <div class="list" id="list"></div>
+
+  <details>
+    <summary>“Listeye Ekle” butonunu kur</summary>
+    <ol>
+      <li>PC: bu butonu yer imleri çubuğuna sürükle → <a class="btn small" id="bm" href="#">Listeye Ekle</a></li>
+      <li>Telefon: <button class="btn ghost small" type="button" id="copyBm">Kodu kopyala</button>. Chrome'da bir sayfayı yer imine ekle, yer imini düzenle, adını <code>listeekle</code> yap, URL'ye kodu yapıştır.</li>
+      <li>Maps'te (tarayıcıda) mekân açıkken butona bas, ya da telefonda adres çubuğuna <code>listeekle</code> yazıp yer imine dokun. Listem açılır, bilgiler hazır gelir, <b>Ekle</b>'ye bas.</li>
+    </ol>
+  </details>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const LS = { get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
+let cfg = { url: LS.get('listem.url'), key: LS.get('listem.key') };
+let state = { sec:'yemek', cat:'hepsi', items:[], loaded:false };
+const say = t => { $('msg').textContent = t; };
+
+// ---------- bookmarklet ----------
+const APP = location.origin + location.pathname;
+const BM_SRC = `(()=>{const d=document,q=s=>d.querySelector(s),L=location.href,o={u:L,t:d.title.replace(/ - Google (Haritalar|Maps)$/,'')};const al=[...d.querySelectorAll('[aria-label]')];const h=q('h1');if(/google\\.[^/]+\\/maps/.test(L)&&h){o.m=1;o.t=h.textContent.trim();const r=al.find(e=>/^\\s*[\\d,.]+ (yıldız|stars?)/i.test(e.getAttribute('aria-label')));if(r)o.r=parseFloat(r.getAttribute('aria-label').replace(',','.'));const c=al.find(e=>/[\\d.,]+ (yorum|reviews?)/i.test(e.getAttribute('aria-label')));if(c)o.c=parseInt(c.getAttribute('aria-label').replace(/[^\\d]/g,''));const a=q('button[data-item-id="address"]');if(a)o.a=(a.getAttribute('aria-label')||a.textContent).replace(/^(Adres|Address):\\s*/,'').trim();const g=L.match(/!3d(-?[\\d.]+)!4d(-?[\\d.]+)/)||L.match(/@(-?[\\d.]+),(-?[\\d.]+)/);if(g){o.lat=+g[1];o.lng=+g[2]}const hi=q('button[jsaction*="heroHeaderImage"] img');if(hi)o.i=hi.src}if(!o.i){const m=q('meta[property="og:image"]');if(m)o.i=m.content}window.open('${APP}#add='+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(o))))),'_blank')})()`;
+const BM = 'javascript:' + encodeURIComponent(BM_SRC);
+$('bm').href = BM;
+$('bm').addEventListener('click', e => { e.preventDefault(); say('Bu butonu yer imleri çubuğuna sürükle.'); });
+$('copyBm').addEventListener('click', () => navigator.clipboard.writeText(BM).then(() => say('Kod kopyalandı.'), () => say('Kopyalanamadı.')));
+
+// ---------- sunucu ----------
+async function api(body){
+  const r = await fetch(cfg.url, { method:'POST', body: JSON.stringify({ key: cfg.key, ...body }) });
+  const j = await r.json();
+  if(j.error) throw new Error(j.error === 'sifre' ? 'Şifre yanlış' : j.error);
+  return j;
+}
+async function load(){
+  if(!cfg.url || !cfg.key){ $('setup').hidden = false; render(); return; }
+  try{
+    const r = await fetch(cfg.url + '?key=' + encodeURIComponent(cfg.key));
+    const j = await r.json();
+    if(j.error) throw new Error(j.error === 'sifre' ? 'Şifre yanlış' : j.error);
+    state.items = j.items; state.loaded = true; $('setup').hidden = true;
+  }catch(e){ say('Liste yüklenemedi: ' + e.message + '. Ayarları kontrol et.'); }
+  render();
+}
+async function save(it){
+  const i = state.items.findIndex(x => x.id === it.id);
+  if(i >= 0) state.items[i] = it; else state.items.push(it);
+  render();
+  try{ await api({ op:'put', item: it }); }catch(e){ say('Kaydedilemedi: ' + e.message); load(); }
+}
+async function remove(id){
+  state.items = state.items.filter(x => x.id !== id); render();
+  try{ await api({ op:'del', id }); }catch(e){ say('Silinemedi: ' + e.message); load(); }
+}
+
+// ---------- ayrıştırma ----------
+function cityFrom(addr){
+  if(!addr) return {};
+  const last = addr.split(',').pop().trim().replace(/^\d{5}\s*/, '');
+  const p = last.split('/');
+  return p.length === 2 ? { semt:p[0].trim(), sehir:p[1].trim() } : { sehir:last };
+}
+function fromBookmark(o){
+  return { url:o.u, name:o.t, maps:!!o.m, rating:o.r ?? null, reviews:o.c ?? null, address:o.a || '',
+           lat:o.lat ?? null, lng:o.lng ?? null, img:o.i || '', ...cityFrom(o.a) };
+}
+function parseInput(txt){
+  txt = txt.trim();
+  if(txt.startsWith('LST1:')) return fromBookmark(JSON.parse(decodeURIComponent(escape(atob(txt.slice(5))))));
+  const m = txt.match(/https?:\/\/\S+/);
+  if(m){
+    const u = m[0];
+    const maps = /google\.[^/]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(u);
+    let name = '';
+    const pm = u.match(/\/place\/([^/@?]+)/);
+    if(pm) name = decodeURIComponent(pm[1].replace(/\+/g,' '));
+    const g = u.match(/!3d(-?[\d.]+)!4d(-?[\d.]+)/) || u.match(/@(-?[\d.]+),(-?[\d.]+)/);
+    if(!name){ const rest = txt.replace(u,'').trim(); name = rest || (maps ? 'Maps mekânı (adını düzenle)' : new URL(u).hostname.replace(/^www\./,'')); }
+    return { url:u, name, maps, rating:null, reviews:null, lat:g?+g[1]:null, lng:g?+g[2]:null, img:'' };
+  }
+  return { url:'', name:txt, maps:false };
+}
+
+// ---------- görünüm ----------
+function el(tag, props = {}, ...kids){
+  const e = document.createElement(tag);
+  for(const [k,v] of Object.entries(props)){
+    if(k === 'class') e.className = v; else if(k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v);
+  }
+  for(const k of kids) if(k != null && k !== false) e.append(k);
+  return e;
+}
+function mapsLink(it){
+  if(it.lat != null) return `https://www.google.com/maps/search/?api=1&query=${it.lat},${it.lng}`;
+  if(it.maps && it.url) return it.url;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent([it.name,it.semt,it.sehir].filter(Boolean).join(' '))}`;
+}
+const host = u => { try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } };
+function render(){
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', b.dataset.sec === state.sec));
+  document.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.cat === state.cat));
+  $('cats').hidden = state.sec !== 'yemek';
+  $('catSel').hidden = state.sec !== 'yemek';
+  let list = state.items.filter(i => i.sec === state.sec);
+  if(state.sec === 'yemek' && state.cat !== 'hepsi') list = list.filter(i => i.cat === state.cat);
+  list.sort((a,b) => (a.done?1:0) - (b.done?1:0) || (b.t||0) - (a.t||0));
+  $('count').textContent = state.loaded ? `${list.length} kayıt` : '';
+  const box = $('list'); box.replaceChildren();
+  if(!state.loaded){ box.append(el('div',{class:'empty'}, cfg.url ? 'Liste yükleniyor…' : 'Önce yukarıdan bağlantı ayarlarını gir.')); return; }
+  if(!list.length){
+    box.append(el('div',{class:'empty'}, state.sec==='yemek' ? 'Henüz mekân yok. Maps linkini yukarıya yapıştır.' : state.sec==='hediye' ? 'Henüz hediye yok. Ürün linkini yapıştır.' : 'Unutmaman gereken bir şeyi yaz.'));
+    return;
+  }
+  for(const it of list) box.append(card(it));
+}
+const DEST = [['yemek','Kahvaltı','Kahvaltı'],['yemek','Ana Yemek','Ana Yemek'],['yemek','Tatlı','Tatlı'],['hediye','','Hediyeler'],['not','','Unutma']];
+function card(it){
+  const c = el('div',{class:'item' + (it.done ? ' done' : '')});
+  const imgSrc = it.img || (it.url && !it.maps ? 'https://image.thum.io/get/width/400/' + it.url : '');
+  if(imgSrc){
+    const im = el('img',{class:'thumb',src:imgSrc,alt:'',loading:'lazy',referrerpolicy:'no-referrer'});
+    im.addEventListener('error', () => { im.remove(); c.classList.add('noimg'); });
+    c.append(im);
+  } else c.classList.add('noimg');
+
+  const meta = el('div',{class:'meta'},
+    it.rating != null ? el('span',{class:'star'}, '★ ' + String(it.rating).replace('.',',')) : null,
+    it.reviews != null ? el('span',{}, Number(it.reviews).toLocaleString('tr-TR') + ' yorum') : null,
+    (it.semt || it.sehir) ? el('span',{}, [it.semt, it.sehir].filter(Boolean).join(', ')) : null,
+    !it.maps && it.url ? el('span',{}, host(it.url)) : null);
+  const title = it.url ? el('a',{class:'name',href:it.url,target:'_blank',rel:'noopener'}, it.name) : el('span',{class:'name'}, it.name);
+
+  const grip = el('button',{class:'btn ghost small grip',type:'button','aria-label':'Sürükleyerek taşı',title:'Sürükle'},'⠿');
+  grip.addEventListener('pointerdown', e => startDrag(e, it, c));
+  const moves = el('div',{class:'moves',hidden:''});
+  for(const [sec,cat,label] of DEST){
+    const same = it.sec === sec && (sec !== 'yemek' || it.cat === cat);
+    if(!same) moves.append(el('button',{class:'btn ghost small',type:'button',onclick:()=>move(it,sec,cat)}, label));
+  }
+  const del = el('button',{class:'btn ghost small',type:'button'},'Sil');
+  del.addEventListener('click', () => {
+    if(del.dataset.arm){ remove(it.id); return; }
+    del.dataset.arm = 1; del.className = 'btn danger small'; del.textContent = 'Emin misin?';
+    setTimeout(() => { delete del.dataset.arm; del.className = 'btn ghost small'; del.textContent = 'Sil'; }, 3000);
+  });
+  const acts = el('div',{class:'acts'}, grip,
+    it.sec === 'yemek'
+      ? el('a',{class:'btn small',href:mapsLink(it),target:'_blank',rel:'noopener'},'Haritada aç')
+      : el('button',{class:'btn ghost small',type:'button',onclick:()=>save({...it, done:!it.done})}, it.done ? 'Geri al' : (it.sec==='hediye' ? 'Alındı' : 'Tamam')),
+    el('button',{class:'btn ghost small',type:'button',onclick:()=>{ moves.hidden = !moves.hidden; }},'Taşı'),
+    el('button',{class:'btn ghost small',type:'button',onclick:()=>edit(it, body)},'Düzenle'),
+    del);
+  const body = el('div',{class:'body'}, title, meta, it.note ? el('div',{class:'note'}, it.note) : null, acts, moves);
+  c.append(body);
+  return c;
+}
+function edit(it, body){
+  const n  = el('input',{type:'text',id:'en-'+it.id,value:it.name,'aria-label':'Ad'});
+  const nt = el('input',{type:'text',id:'nt-'+it.id,value:it.note||'',placeholder:'Not','aria-label':'Not'});
+  const lc = el('input',{type:'text',id:'lc-'+it.id,value:[it.semt,it.sehir].filter(Boolean).join('/'),placeholder:'Semt/Şehir','aria-label':'Semt/Şehir'});
+  body.replaceChildren(el('div',{class:'row'}, n, nt, it.sec === 'yemek' ? lc : null,
+    el('button',{class:'btn small',type:'button',onclick:()=>{
+      const p = lc.value.split('/').map(s => s.trim());
+      const upd = { ...it, name: n.value.trim() || it.name, note: nt.value.trim() };
+      if(it.sec === 'yemek'){ upd.semt = p[1] ? p[0] : ''; upd.sehir = p[1] || p[0] || ''; }
+      save(upd);
+    }},'Kaydet'),
+    el('button',{class:'btn ghost small',type:'button',onclick:render},'Vazgeç')));
+  n.focus();
+}
+function move(it, sec, cat){
+  const upd = { ...it, sec };
+  if(sec === 'yemek') upd.cat = cat || it.cat || 'Ana Yemek';
+  if(it.sec === sec && (sec !== 'yemek' || it.cat === upd.cat)) { render(); return; }
+  save(upd);
+  say('Taşındı: ' + (sec === 'yemek' ? upd.cat : sec === 'hediye' ? 'Hediyeler' : 'Unutma'));
+}
+function startDrag(e, it, cardEl){
+  e.preventDefault();
+  const g = cardEl.cloneNode(true); g.classList.add('ghostcard'); document.body.append(g);
+  document.body.classList.add('dragging'); $('cats').hidden = false;
+  let over = null, scroll = 0, raf = 0;
+  const tick = () => { if(scroll) window.scrollBy(0, scroll); raf = requestAnimationFrame(tick); };
+  raf = requestAnimationFrame(tick);
+  const pos = ev => {
+    g.style.left = Math.max(4, ev.clientX - 30) + 'px'; g.style.top = (ev.clientY - 20) + 'px';
+    scroll = ev.clientY > innerHeight - 70 ? 10 : 0;
+    const t = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.tab,.chip:not([data-cat="hepsi"])') || null;
+    if(t !== over){ over?.classList.remove('over'); over = t; over?.classList.add('over'); }
+  };
+  pos(e);
+  const up = () => {
+    removeEventListener('pointermove', pos); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+    cancelAnimationFrame(raf); g.remove(); document.body.classList.remove('dragging'); over?.classList.remove('over');
+    if(over){ over.dataset.sec ? move(it, over.dataset.sec, null) : move(it, 'yemek', over.dataset.cat); } else render();
+  };
+  addEventListener('pointermove', pos); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+}
+
+// ---------- olaylar ----------
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => { state.sec = b.dataset.sec; render(); }));
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { state.cat = b.dataset.cat; render(); }));
+$('setBtn').addEventListener('click', () => { $('sUrl').value = cfg.url; $('sKey').value = cfg.key; $('setup').hidden = !$('setup').hidden; });
+$('setup').addEventListener('submit', e => {
+  e.preventDefault();
+  cfg = { url: $('sUrl').value.trim(), key: $('sKey').value };
+  LS.set('listem.url', cfg.url); LS.set('listem.key', cfg.key);
+  $('sMsg').textContent = 'Kaydedildi, yükleniyor…';
+  load().then(() => { $('sMsg').textContent = ''; });
+});
+$('addForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const txt = $('inp').value; if(!txt.trim()) return;
+  if(!state.loaded){ say('Önce bağlantı ayarlarını gir.'); return; }
+  let it;
+  try{ it = parseInput(txt); }catch(err){ say('Bu metni okuyamadım.'); return; }
+  it.id = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  it.sec = state.sec; it.t = Date.now(); it.note = $('noteInp').value.trim(); it.done = false;
+  if(it.sec === 'yemek') it.cat = state.cat !== 'hepsi' ? state.cat : $('catSel').value;
+  save(it);
+  $('inp').value = ''; $('noteInp').value = '';
+  say(it.maps && it.rating == null ? 'Eklendi. Puan için butonu kullan.' : 'Eklendi.');
+});
+
+// Butondan gelen veri: #add=...
+if(location.hash.startsWith('#add=')){
+  try{
+    const enc = decodeURIComponent(location.hash.slice(5));
+    const o = JSON.parse(decodeURIComponent(escape(atob(enc))));
+    state.sec = o.m ? 'yemek' : 'hediye';
+    $('inp').value = 'LST1:' + enc;
+    say(`“${o.t}” hazır. ${o.m ? 'Kategoriyi seç ve ' : 'Bölümü seç ve '}Ekle'ye bas.`);
+  }catch(e){ say('Butondan gelen veri okunamadı.'); }
+  history.replaceState(null, '', location.pathname);
+}
+addEventListener('visibilitychange', () => { if(!document.hidden && state.loaded) load(); });
+render();
+load();
+</script>
+</body>
+</html>

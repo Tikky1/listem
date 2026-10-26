@@ -82,9 +82,9 @@ code{background:var(--soft);padding:1px 5px;border-radius:5px;font-size:12px}
 
   <div class="nav">
     <div class="tabs" role="group" aria-label="Bölümler">
-      <button class="tab" data-sec="yemek" aria-pressed="true" type="button">Yemek Yerleri</button>
+      <button class="tab" data-sec="yemek" aria-pressed="false" type="button">Yemek Yerleri</button>
       <button class="tab" data-sec="hediye" aria-pressed="false" type="button">Hediyeler</button>
-      <button class="tab" data-sec="not" aria-pressed="false" type="button">Unutma</button>
+      <button class="tab" data-sec="not" aria-pressed="true" type="button">Unutma</button>
     </div>
     <div class="chips" id="cats" role="group" aria-label="Kategori">
       <button class="chip" data-cat="hepsi" aria-pressed="true" type="button">Hepsi</button>
@@ -121,7 +121,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:5px;font-size:12px}
 const $ = id => document.getElementById(id);
 const LS = { get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } }, set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} } };
 let cfg = { url: LS.get('listem.url'), key: LS.get('listem.key') };
-let state = { sec:'yemek', cat:'hepsi', items:[], loaded:false };
+let state = { sec:'not', cat:'hepsi', items:[], loaded:false };
 const say = t => { $('msg').textContent = t; };
 
 // ---------- bookmarklet ----------
